@@ -119,12 +119,26 @@ unique(reptiles$scientificName)
 length(unique(reptiles$scientificName))#102 unique species (not good for bar plot)
 table(reptiles$scientificName) #some species don't have the complete scientific name
 
+#For the purpose of the visualisation I'll keep the species that have the complete scientific name
+#Scientific name has 2 or more words
 
+#Use regex to match first character capital followed by any character not capital
+#Add white space to remove species identified with genus
+reptiles <- reptiles %>%
+  filter(grepl("^[A-Z][^A-Z]+\\s+", scientificName))
 
 #Check forest types
 unique(reptiles$forest2013) #there is a blank string as a value
 length(unique(reptiles$forest2013)) #11 different
 table(reptiles$forest2013) #17 occurrences on the blank string, what is this?
+
+#Maybe preserved specimen?
+reptiles%>%
+  filter(forest2013 == "") #Human observations and one preserved specimen
+
+#Change to unknown
+reptiles <- reptiles %>%
+  mutate(forest2013 = case_when(forest2013 == "" ~ "Unknown", TRUE ~ forest2013))
 
 ggplot(reptiles, aes(x = forest2013)) +
   geom_bar() +
@@ -146,9 +160,17 @@ ggplot(reptiles, aes(x = basisOfRecord))+
 #Human observation has the most records followed by unknown
 
 #Check date range
-range(reptiles$eventDate, na.rm = TRUE)
+range(reptiles$eventDate, na.rm = TRUE) #Records from 1954!
 
-#Records from 1954!
+#For the visualisation I'll use the month
+#Create month column
+reptiles <- reptiles %>%
+  mutate(month = factor(month(eventDate, label = TRUE), 
+                           levels = c("Jan", "Feb", "Mar",
+                                      "Apr", "May", "Aug",
+                                      "Sep", "Oct", "Nov",
+                                      "Dec")))
+
 
 #Save the data and perform bivariate analysis as part the visualisation task
 save(reptiles, file = "reptiles.RData")
