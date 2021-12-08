@@ -23,3 +23,15 @@ h3{
   cursor: move;
 }
 
+#logo {
+  /* Appearance */
+  background-color: transparent;
+  cursor: move;
+  /*Fade in while not hovering */
+  opacity: .5;
+}
+
+#logo:hover {
+  opacity: 1;
+  
+}
