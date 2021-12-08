@@ -1,0 +1,25 @@
+input[type="number"] {
+  max-width: 80%;
+}
+
+div.outer {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+h3{
+  font-weight:400;
+}
+#controls {
+  /* Appearance */
+  background-color: #D4DADC;
+  color: 	#808080;
+  padding: 0 10px 10px 10px;
+  cursor: move;
+}
+
