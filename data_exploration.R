@@ -9,8 +9,6 @@ library(lubridate)
 library(janitor)
 library(httr)
 library(jsonlite)
-library(sf)
-library(leaflet)
 library(inspectdf)
 
 # Download data ##########################################################
@@ -153,7 +151,11 @@ length(unique(reptiles$dataResourceName)) #23 resources
 table(reptiles$dataResourceName) # ACT Wildlife Atlas with most ocurrence
 
 #Check basis of record
-unique(reptiles$basisOfRecord)
+unique(reptiles$basisOfRecord) #Names are in snake formate
+
+reptiles <- reptiles %>%
+  mutate(basisOfRecord = str_to_title(gsub("_", " ", basisOfRecord)))
+
 ggplot(reptiles, aes(x = basisOfRecord))+
   geom_bar()+
   theme_bw()
