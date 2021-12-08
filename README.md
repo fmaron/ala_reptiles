@@ -57,13 +57,17 @@ The app was built in the `app.R` file and it requires `reptiles.RData`, `style.c
 
 **Option 1**
 
+Visit: https://fmaronp.shinyapps.io/ala_reptiles/
+
+**Option 2**
+
 Install the dependencies required for the visualisation. Run the following in R studio:
 
 ```r
 shiny::runGitHub("ala_reptiles", "fmaron")
 ```
 
-**Option 2**
+**Option 3**
 
 1. Clone the GitHub repo
 2. Open `app.R` in RStudio
