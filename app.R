@@ -28,7 +28,7 @@ ui <- bootstrapPage(
     windowTitle = "Reptiles",
     theme = shinytheme("united"),
     collapsible = TRUE,
-    title = div(a(img(src = "ALAlogo.png", height = "80", width = "160"), href = "https://www.ala.org.au/"),style = "margin-top:-35px;")),
+    title = "Reptiles of the Australian Capital Territory"),
    
    #Tab with leaflet map
    tabPanel(
@@ -48,8 +48,10 @@ ui <- bootstrapPage(
                      h3(textOutput("occurrences"), align = "left"),
                      
                      #Filter by species
+                     #CSS for picker input text when nothing is selected
+                     tags$style(".bs-placeholder {color: #FFFFFF !important;}"),
                      pickerInput(inputId = "selectSpecies",
-                                   label = "Select species",
+                                   label = h5("Select species"),
                                    choices = unique(reptiles$scientificName),
                                    multiple = TRUE,
                                    options = pickerOptions(actionsBox = TRUE,
@@ -63,7 +65,18 @@ ui <- bootstrapPage(
                        tabPanel("Data resource name", plotlyOutput("resource", height = "200%")),
                        tabPanel("Basis of record", plotlyOutput("record")),
                        tabPanel("Records by month", plotlyOutput("month"))
-                     )
+                     ),
+                     
+                     #GitHub logo to the repo
+                     absolutePanel(id = "logo", 
+                                   bottom = 40, 
+                                   left = 60, 
+                                   width = 50, 
+                                   fixed=TRUE, 
+                                   draggable = FALSE, 
+                                   height = "auto",
+                                   tags$a(href = 'https://github.com/fmaron/ala_reptiles', 
+                                          tags$img(src = 'github_logo.png', height = '50', width = '50')))
                      
                      )
          )
@@ -92,6 +105,17 @@ server <- function(input, output, session){
       return(NULL)
     )
   })
+  #Map text
+  
+  mapText <- reactive(paste(
+    "Longitude: ", reactiveReptiles()$decimalLongitude, "<br/>",
+    "Latitude: ", reactiveReptiles()$decimalLatitude, "<br/>",
+    "Date: ", reactiveReptiles()$eventDate, "<br/>",
+    "Species: ", reactiveReptiles()$scientificName, "<br/>",
+    "Type of forest: ", reactiveReptiles()$forest2013, "<br/>",
+    "Data resource: ",reactiveReptiles()$dataResourceName, "<br/>",
+    "Basis of record: ",reactiveReptiles()$basisOfRecord,sep = "")%>%
+      lapply(htmltools::HTML))
   
   #Base leaflet map 
   map <- reactive({
@@ -119,7 +143,8 @@ server <- function(input, output, session){
                          stroke = FALSE,
                          fillOpacity = .6,
                          radius = 8,
-                         layerId = ~id, #bug when deselecting all
+                         layerId = ~id,
+                         label = mapText(),
                          group = "speciesPoints") %>%
         flyToBounds(lng1 = min(reactiveReptiles()$decimalLongitude)- 0.3,
                     lng2 = max(reactiveReptiles()$decimalLongitude),
@@ -158,7 +183,8 @@ server <- function(input, output, session){
       highlight_key(key = ~forest2013)%>%
       plot_ly(x = ~forest2013, y = ~numOccurrence, type = 'bar',
             opacity = .6,
-            marker = list(color = "#F16648")) %>%
+            marker = list(color = "#F16648"),
+            hovertemplate = paste('%{x}', '<br>Occurrence: %{y}<br>','<extra></extra>')) %>%
       layout(yaxis = list(title = 'Number of occurrences'),
              xaxis = list(title='Type of forest in 2013'),
              barmode = "overlay") %>%
@@ -182,12 +208,15 @@ server <- function(input, output, session){
   
   output$resource <- renderPlotly({
     reactiveResource() %>%
+      mutate(dataResourceName = str_trunc(dataResourceName, 25, "right"))%>%
       # mutate(dataResourceName = sapply(dataResourceName, 
       #                                  function(x) gsub(" ", "</br>", x))) %>%
       highlight_key(key = ~dataResourceName)%>%
-      plot_ly(x = ~dataResourceName, y = ~numOccurrence, type = 'bar',
+      plot_ly(x = ~dataResourceName, y = ~numOccurrence, 
+              type = 'bar',
               opacity = .6,
-              marker = list(color = "#F16648")) %>%
+              marker = list(color = "#F16648"),
+              hovertemplate = paste('%{x}', '<br>Occurrence: %{y}<br>','<extra></extra>')) %>%
       layout(yaxis = list(title = 'Number of occurrences'),
              xaxis = list(title='Data resource name'),
              barmode = "overlay") %>%
@@ -214,7 +243,8 @@ server <- function(input, output, session){
       highlight_key(key = ~basisOfRecord)%>%
       plot_ly(x = ~basisOfRecord, y = ~numOccurrence, type = 'bar',
               opacity = .6,
-              marker = list(color = "#F16648")) %>%
+              marker = list(color = "#F16648"),
+              hovertemplate = paste('%{x}', '<br>Occurrence: %{y}<br>','<extra></extra>')) %>%
       layout(yaxis = list(title = 'Number of occurrences'),
              xaxis = list(title='Basis of record'),
              barmode = "overlay") %>%
@@ -242,7 +272,8 @@ server <- function(input, output, session){
       highlight_key(key = ~month)%>%
       plot_ly(x = ~month, y = ~numOccurrence, type = 'bar',
               opacity = .6,
-              marker = list(color = "#F16648")) %>%
+              marker = list(color = "#F16648"),
+              hovertemplate = paste('%{x}', '<br>Occurrence: %{y}<br>','<extra></extra>')) %>%
       layout(yaxis = list(title = 'Number of occurrences'),
              xaxis = list(title='Month'),
              barmode = "overlay") %>%
