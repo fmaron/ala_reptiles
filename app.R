@@ -28,7 +28,7 @@ ui <- bootstrapPage(
     windowTitle = "Reptiles",
     theme = shinytheme("united"),
     collapsible = TRUE,
-    title = "Reptiles"),
+    title = div(a(img(src = "ALAlogo.png", height = "80", width = "160"), href = "https://www.ala.org.au/"),style = "margin-top:-35px;")),
    
    #Tab with leaflet map
    tabPanel(
@@ -119,20 +119,20 @@ server <- function(input, output, session){
                          stroke = FALSE,
                          fillOpacity = .6,
                          radius = 8,
-                         #layerId = ~scientificName,
+                         layerId = ~id, #bug when deselecting all
                          group = "speciesPoints") %>%
-        flyToBounds(lng1 = min(reactiveReptiles()$decimalLongitude)- 0.2,
-                    lng2 = max(reactiveReptiles()$decimalLongitude)- 0.2,
+        flyToBounds(lng1 = min(reactiveReptiles()$decimalLongitude)- 0.3,
+                    lng2 = max(reactiveReptiles()$decimalLongitude),
                     lat1 = min(reactiveReptiles()$decimalLatitude),
                     lat2 = max(reactiveReptiles()$decimalLatitude))
     }else{
       leafletProxy("reptileLocation")%>%
         clearMarkers()%>%
-        clearShapes()#%>%
-        #removeMarker(layerId = unique(reactiveReptiles()$scientificName))
+        clearShapes()%>%
+        removeMarker(layerId = reactiveReptiles()$id)
     }
     
-  }, ignoreNULL = TRUE)
+  }, ignoreNULL = FALSE)
   
   
   
@@ -262,3 +262,4 @@ server <- function(input, output, session){
   })
 }
 
+shinyApp(ui,server)
