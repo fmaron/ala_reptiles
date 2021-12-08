@@ -209,8 +209,6 @@ server <- function(input, output, session){
   output$resource <- renderPlotly({
     reactiveResource() %>%
       mutate(dataResourceName = str_trunc(dataResourceName, 25, "right"))%>%
-      # mutate(dataResourceName = sapply(dataResourceName, 
-      #                                  function(x) gsub(" ", "</br>", x))) %>%
       highlight_key(key = ~dataResourceName)%>%
       plot_ly(x = ~dataResourceName, y = ~numOccurrence, 
               type = 'bar',
