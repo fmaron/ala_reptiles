@@ -51,7 +51,7 @@ The app was built in the `app.R` file and it requires `reptiles.RData`, `style.c
 - `app.R`: contains the ui and server for the Shiny app.
 - `reptiles.RData`: dataset of reptiles in the ACT, previously generated with `data_exploration.R`.
 - `style.css`: CSS format for the application.
-- `www`: contains the principal media utilised by the app. In this case, the ALA logo.
+- `www`: contains the principal media utilised by the app. In this case, GitHub logo.
 
 #### Running the app
 
