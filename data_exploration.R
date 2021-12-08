@@ -169,9 +169,9 @@ range(reptiles$eventDate, na.rm = TRUE) #Records from 1954!
 reptiles <- reptiles %>%
   mutate(month = factor(month(eventDate, label = TRUE), 
                            levels = c("Jan", "Feb", "Mar",
-                                      "Apr", "May", "Aug",
-                                      "Sep", "Oct", "Nov",
-                                      "Dec")))
+                                      "Apr", "May","Jun",
+                                      "Jul", "Aug","Sep", 
+                                      "Oct", "Nov", "Dec")))
 
 
 #Save the data and perform bivariate analysis as part the visualisation task
